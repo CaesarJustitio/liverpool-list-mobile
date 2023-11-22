@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:liverpool_list/screens/liverpoolist_form.dart';
-import 'package:liverpool_list/screens/show_data_page.dart';
+import 'package:liverpool_list/screens/list_product.dart';
 import 'package:liverpool_list/screens/menu.dart';
+import 'package:liverpool_list/screens/liverpoolist_form.dart';
 // TODO: Impor halaman ShopFormPage jika sudah dibuat
 
 class LeftDrawer extends StatelessWidget {
@@ -15,30 +15,25 @@ class LeftDrawer extends StatelessWidget {
           const DrawerHeader(
             // TODO: Bagian drawer header
             decoration: BoxDecoration(
-              color: Colors.red,
-            ),
-            child: Column(
-              children: [
-                Text(
-                  'Liverpool List',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                Padding(padding: EdgeInsets.all(10)),
-                Text(
-                  "Bawa Pemain Idolamu ke LIVERPOOL!",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                    fontSize: 15,
-                    color: Colors.black,
-                    fontWeight: FontWeight.normal),
-                ),
-              ],
-            ),
+    color: Colors.red,
+  ),
+  child: Column(
+    children: [
+      Text(
+        'Liverpool List',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 30,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+      Padding(padding: EdgeInsets.all(10)),
+      Text("Beli pemain terbaikmu!",
+          // TODO: Tambahkan gaya teks dengan center alignment, font ukuran 15, warna putih, dan weight biasa
+          ),
+    ],
+  ),
           ),
           // TODO: Bagian routing
           ListTile(
@@ -55,28 +50,29 @@ class LeftDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.add_shopping_cart),
-            title: const Text('Tambah Item'),
+            title: const Text('Tambah Pemain'),
+            // Bagian redirection ke ShopFormPage
             onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ShopFormPage(),
-                  ));
+                Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ShopFormPage()),
+                );
             },
           ),
           ListTile(
-            leading: const Icon(Icons.checklist),
-            title: const Text('Lihat Pemain'),
+            leading: const Icon(Icons.shopping_basket),
+            title: const Text('Daftar Pemain'),
             onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PlayerListPage() 
-                  ));
-            },
+                // Route menu ke halaman produk
+                Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProductPage()),
+                );
+              },
           ),
         ],
       ),
     );
   }
 }
+

@@ -477,3 +477,191 @@ if (item.name == "Lihat Pemain") {
   );
 };
 ```
+
+
+# Tugas 9
+
+## Pertanyaan
+
+### 1. Apakah bisa kita melakukan pengambilan data JSON tanpa membuat model terlebih dahulu? Jika iya, apakah hal tersebut lebih baik daripada membuat model sebelum melakukan pengambilan data JSON?
+Ya, bisa. 
+Pengambilan data JSON tanpa model lebih fleksible, sehingga tidak mengikuti format tertentu. Ketika memasukkan data, pembuatan model tidak divalidasi, sehingga bisa apa saja. Namun karena kurangnya struktur, dapat menyebabkan kesulitan dalam memelihara kode.
+Pengambilan data JSON dengan model akan memudahkan membaca dan memelihara kode, terutama dalam proyek besar. Dengan model, validasi data yang lebih ketat dan penanganan kesalahan yang lebih baik.
+
+Untuk proyek skala kecil atau tugas yang sederhana, pengambilan data JSON tanpa model bisa lebih efisien. Untuk aplikasi yang lebih besar dan kompleks, model dapat memberikan struktur yang lebih baik dan memudahkan pemeliharaan.
+
+### 2. Jelaskan fungsi dari CookieRequest dan jelaskan mengapa instance CookieRequest perlu untuk dibagikan ke semua komponen di aplikasi Flutter.
+*Fungsi Cookie:*
+- Menyimpan informasi sesi.
+- Memungkinkan pengguna tetap login saat mereka menggunakan aplikasi.
+- Menyimpan preferensi pengguna, agar penggunaan aplikasi lebih personal.
+
+*Kenapa instance CookieRequest harus dibagikan?*
+-  Menjaga konsistensi cookie di seluruh aplikasi sangat penting untuk memastikan bahwa semua permintaan HTTP memiliki informasi sesi atau autentikasi yang sama.
+- Berbagi satu instance memastikan bahwa penggunaan sumber daya dioptimalkan.
+- Mengelola cookie di satu tempat membantu menerapkan praktik keamanan yang konsisten dan meminimalkan risiko kebocoran data.
+- Lebih mudah memelihara karena semua operasi yang berkaitan dengan cookie dalam aplikasi diatur melalui satu mekanisme.
+
+### 3. Jelaskan mekanisme pengambilan data dari JSON hingga dapat ditampilkan pada Flutter.
+1. Integrasi dengan Web Service
+- Pertama, tambahkan paket http ke aplikasi Flutter. Ini memungkinkan aplikasi untuk melakukan permintaan HTTP.
+- Import paket http di file Dart proyek.
+
+2. Pengambilan Data
+- Buat fungsi asinkron yang menggunakan paket http untuk mengirim permintaan GET ke server web.
+Contoh: final response = await http.get(Uri.parse(url));
+
+3. Deserialisasi Data JSON
+- Setelah mendapatkan respons dari server, gunakan jsonDecode dari dart:convert untuk mengonversi string respons JSON menjadi objek Dart.
+
+4. Pemrosesan Data
+- Proses data yang diterima untuk digunakan dalam aplikasi. Ini mungkin melibatkan penyimpanan data dalam variabel atau struktur data yang lebih kompleks.
+
+5. Tampilan di Flutter
+- Gunakan data yang telah diproses untuk membangun widget di Flutter. Data ini bisa digunakan untuk menampilkan teks, daftar, gambar, atau elemen UI lainnya.
+
+6. Serialisasi Data JSON ke Objek Dart
+- Untuk proyek yang lebih kecil, serialisasi bisa dilakukan secara manual. 
+- Untuk proyek yang lebih besar, serialisasi bisa dilakukan secara otomatis dengan paket `json_serializable` untuk mengurangi kemungkinan kesalahan.
+
+### 4. Jelaskan mekanisme autentikasi dari input data akun pada Flutter ke Django hingga selesainya proses autentikasi oleh Django dan tampilnya menu pada Flutter.
+1. Input data akun pengguna di Flutter. Pengguna login di aplikasi Flutter.
+2. Setelah pengguna menekan tombol login, Flutter mengirimkan data tersebut ke server Django. Ini biasanya dilakukan dengan permintaan HTTP POST. Data dikirimkan dalam format yang dapat diterima oleh server Django, seperti JSON.
+3. Server Django menerima data login dari request HTTP. Django menggunakan sistem autentikasi bawaan atau kustom untuk memverifikasi data login pengguna.
+4. Setelah memverifikasi kredensial, Django mengirimkan respons kembali ke aplikasi Flutter. Untuk autentikasi yang berhasil, Django mungkin mengirimkan token autentikasi atau ID sesi yang akan digunakan untuk autentikasi berikutnya.
+5. Jika login berhasil, aplikasi Flutter mengalihkan pengguna ke halaman homepage pengguna.
+6. Setelah autentikasi, aplikasi Flutter menampilkan menu atau antarmuka pengguna yang sesuai.
+
+### 5. Sebutkan seluruh widget yang kamu pakai pada tugas ini dan jelaskan fungsinya masing-masing.
+Drawer: Widget ini digunakan untuk membuat menu drawer yang dapat ditarik dari sisi layar. Ini memberikan navigasi tambahan dalam aplikasi.
+
+ListView: Widget ini digunakan untuk membuat daftar item yang dapat discroll. Dalam konteks ini, digunakan untuk menampilkan item-item dalam drawer.
+
+ListTile: Widget ini digunakan untuk membuat item yang dapat diklik di dalam ListView. Dalam hal ini, digunakan untuk membuat item navigasi di drawer.
+
+Icon: Widget ini digunakan untuk menampilkan ikon di samping teks dalam ListTile.
+
+Material: Widget ini digunakan sebagai dasar untuk menampilkan komponen UI yang mengikuti Material Design. Di sini, digunakan untuk memberikan warna latar belakang pada card.
+
+FutureBuilder: Widget ini digunakan untuk membangun UI berdasarkan hasil dari Future. Dalam kasus ini, digunakan untuk membangun UI setelah data dari fetchItem() diperoleh.
+
+Text: Widget ini digunakan untuk menampilkan teks di layar.
+
+Padding: Widget ini digunakan untuk memberikan padding di sekitar konten lainnya, dalam hal ini di sekitar kolom yang menampilkan detail produk.
+
+Column: Widget ini digunakan untuk menata beberapa widget lainnya secara vertikal. Ini digunakan untuk menampilkan informasi detail produk.
+
+
+## Step-by-step
+1. Membuat halaman login pada proyek tugas Flutter.
+Untuk membuat halaman login, saya membuat file `login.dart` pada folder `screens`. 
+```dart
+void main() {
+    runApp(const LoginApp());
+}
+
+class LoginApp extends StatelessWidget {
+const LoginApp({super.key});
+
+@override
+Widget build(BuildContext context) {
+    return MaterialApp(
+        ...
+    );
+    }
+}
+
+class LoginPage extends StatefulWidget {
+    const LoginPage({super.key});
+
+    @override
+    _LoginPageState createState() => _LoginPageState();
+}
+class _LoginPageState extends State<LoginPage> {
+    final TextEditingController _usernameController = TextEditingController();
+    final TextEditingController _passwordController = TextEditingController();
+
+    @override
+    Widget build(BuildContext context) {
+        ...
+    }
+}
+```
+Lalu, pada `main.dart` material app saya ubah menjadi `home: LoginPage()` agar defaultnya ke login page jika user mengakses app.
+
+2. Mengintegrasikan sistem autentikasi Django dengan proyek tugas Flutter.
+Pertama saya membuat django app `authentication` pada proyek django saya. Lalu, menambahkannya ke installed apps di settings.py aplikasi. Setelah itu menjalankan `pip install django-cors-headers` pada terminal. Lalu, saya menambahkan `corsheaders.middleware.CorsMiddleware` di Middleware settings.py aplikasi dan menambahkan beberapa variable yang berkaitan dengan cookies. 
+Lalu, saya juga membuat function untuk login di `authentication/views.py`, tidak lupa menambahkan path dan url yang sesuai.
+Saya menginstal package `provider` dan `pbp_django_auth`, lalu mengubah main.dart agar mereturn objek Provider dengan CookieRequest. 
+```dart
+class MyApp extends StatelessWidget {
+    const MyApp({Key? key}) : super(key: key);
+
+    @override
+    Widget build(BuildContext context) {
+        return Provider(
+            create: (_) {
+                CookieRequest request = CookieRequest();
+                return request;
+            },
+            ...
+        );
+    }
+}
+```
+3. Membuat model kustom sesuai dengan proyek aplikasi Django.
+Saya mengubah data JSON menjadi model untuk aplikasi Dart dengan memasukkan data JSON dari proyek Django ke website *Quicktype*. Lalu code models yang diperoleh dimasukkan ke file baru bernama `product.dart` pada lib/models.
+
+4. Membuat halaman yang berisi daftar semua item yang terdapat pada endpoint JSON di Django yang telah kamu deploy.
+Saya membuat file `list_product.dart` pada lib/screens. Saya mengimport packages yang diperlukan.
+```dart
+class ProductPage extends StatefulWidget {
+    const ProductPage({Key? key}) : super(key: key);
+
+    @override
+    _ProductPageState createState() => _ProductPageState();
+}
+
+class _ProductPageState extends State<ProductPage> {
+Future<List<Product>> fetchProduct() async {
+    ...
+}
+
+@override
+Widget build(BuildContext context) {
+  ...
+}
+}
+```
+- Tampilkan name, amount, dan description dari masing-masing item pada halaman ini.
+Pada bagian widget build, saya menambahkan kode berikut:
+```dart
+ListView.builder(
+  itemCount: snapshot.data!.length,
+  itemBuilder: (_, index) => Container(
+          margin: const EdgeInsets.symmetric(
+              horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+              Text(
+              "${snapshot.data![index].fields.name}",
+              style: const TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+              ),
+              ),
+              const SizedBox(height: 10),
+              Text("Amount: ${snapshot.data![index].fields.amount}"),
+              const SizedBox(height: 10),
+              Text("Desc: ${snapshot.data![index].fields.description}"),
+              const SizedBox(height: 10),
+              Text("Marketprice: ${snapshot.data![index].fields.marketprice}"),
+              const SizedBox(height: 10),
+              Text("Jumlah Goal: ${snapshot.data![index].fields.goals}"),
+          ],
+          ),
+      ));
+```

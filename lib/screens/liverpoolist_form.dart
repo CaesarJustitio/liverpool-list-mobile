@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:liverpool_list/widgets/liv_card.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:liverpool_list/screens/menu.dart';
 
 class ShopFormPage extends StatefulWidget {
   const ShopFormPage({Key? key});
@@ -8,18 +12,18 @@ class ShopFormPage extends StatefulWidget {
   State<ShopFormPage> createState() => _ShopFormPageState();
 }
 
-List<Player> players = [];
-
 class _ShopFormPageState extends State<ShopFormPage> {
   final _formKey = GlobalKey<FormState>();
   String _name = "";
-  String _formerclub = "";
-  int _marketprice = 0;
-  String _position = "";
+  int _amount = 0;
+  String _description = "";
   int _goals = 0;
+  int _marketprice = 0;
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
+    
     return Scaffold(
       appBar: AppBar(
         title: const Center(
@@ -30,7 +34,6 @@ class _ShopFormPageState extends State<ShopFormPage> {
         backgroundColor: Colors.red,
         foregroundColor: Colors.white,
       ),
-      // TODO: Tambahkan drawer yang sudah dibuat di sini
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -64,46 +67,23 @@ class _ShopFormPageState extends State<ShopFormPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
                   decoration: InputDecoration(
-                    hintText: "Klub asal",
-                    labelText: "Klub asal",
+                    hintText: "Jumlah Pemain",
+                    labelText: "Jumlah Pemain",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5.0),
                     ),
                   ),
                   onChanged: (String? value) {
                     setState(() {
-                      _formerclub = value!;
+                      _amount = int.parse(value!);
                     });
                   },
                   validator: (String? value) {
                     if (value == null || value.isEmpty) {
-                      return "Klub asal tidak boleh kosong!";
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    hintText: "Harga Transfer Pemain",
-                    labelText: "Harga Transfer Pemain",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                  ),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _marketprice = int.parse(value!);
-                    });
-                  },
-                  validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return "Harga tidak boleh kosong!";
+                      return "Jumlah pemain tidakk boleh kosong!";
                     }
                     if (int.tryParse(value) == null) {
-                      return "Harga harus berupa angka!";
+                      return "Jumlah pemain tidakk boleh kosong!";
                     }
                     return null;
                   },
@@ -113,20 +93,20 @@ class _ShopFormPageState extends State<ShopFormPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
                   decoration: InputDecoration(
-                    hintText: "Posisi Pemain",
-                    labelText: "Posisi Pemain",
+                    hintText: "Desc Pemain",
+                    labelText: "Desc Pemain",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5.0),
                     ),
                   ),
                   onChanged: (String? value) {
                     setState(() {
-                      _position = value!;
+                      _description = value!;
                     });
                   },
                   validator: (String? value) {
                     if (value == null || value.isEmpty) {
-                      return "Posisi Pemain tidak boleh kosong!";
+                      return "Desc Pemain tidak boleh kosong!";
                     }
                     return null;
                   },
@@ -158,6 +138,32 @@ class _ShopFormPageState extends State<ShopFormPage> {
                   },
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    hintText: "Harga Transfer Pemain",
+                    labelText: "Harga Transfer Pemain",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                  ),
+                  onChanged: (String? value) {
+                    setState(() {
+                      _marketprice = int.parse(value!);
+                    });
+                  },
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return "Harga tidak boleh kosong!";
+                    }
+                    if (int.tryParse(value) == null) {
+                      return "Harga harus berupa angka!";
+                    }
+                    return null;
+                  },
+                ),
+              ),
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Padding(
@@ -166,46 +172,37 @@ class _ShopFormPageState extends State<ShopFormPage> {
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Colors.red),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        players.add(Player(
-                                name: _name,
-                                formerclub: _formerclub,
-                                marketprice: _marketprice,
-                                position: _position,
-                                goals: _goals,
+                          // Kirim ke Django dan tunggu respons
+                          // TODO: Ganti URL dan jangan lupa tambahkan trailing slash (/) di akhir URL!
+                          final response = await request.postJson(
+                          "http://127.0.0.1:8000/create-flutter/",
+                          jsonEncode(<String, String>{
+                              'name': _name,
+                              'amount': _amount.toString(),
+                              'description': _description,
+                              'goals': _goals.toString(),
+                              'marketprice': _marketprice.toString(),
+                          }));
+                          if (response['status'] == 'success') {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(
+                              content: Text("Pemain baru berhasil dibeli!"),
                               ));
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text('Pemain berhasil ditransfer ke LIVERPOOL'),
-                              content: SingleChildScrollView(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Nama: $_name'),
-                                    Text('Asal Klub: $_formerclub'),
-                                    Text('Harga: $_marketprice'),
-                                    Text('Posisi: $_position'),
-                                    Text('Jumlah Goal: $_goals'),
-                                  ],
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  child: const Text('OK'),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                        _formKey.currentState!.reset();
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => MyHomePage()),
+                              );
+                          } else {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(
+                                  content:
+                                      Text("Terdapat kesalahan, silakan coba lagi."),
+                              ));
+                          }
                       }
-                    },
+                  },
                     child: const Text(
                       "Save",
                       style: TextStyle(color: Colors.white),

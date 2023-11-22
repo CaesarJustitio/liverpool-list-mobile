@@ -1,28 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:liverpool_list/screens/list_product.dart';
+import 'package:liverpool_list/screens/login.dart';
 import 'package:liverpool_list/screens/liverpoolist_form.dart';
-import 'package:liverpool_list/screens/show_data_page.dart';
 
 class LiverpoolistItem {
   final String name;
   final IconData icon;
 
   LiverpoolistItem(this.name, this.icon);
-}
-
-class Player {
-  final String name;
-  final String formerclub;
-  final int marketprice;
-  final String position;
-  final int goals;
-
-  Player({
-    required this.name,
-    required this.formerclub,
-    required this.marketprice,
-    required this.position,
-    required this.goals,
-  });
 }
 
 class LiverpoolCard extends StatelessWidget {
@@ -32,10 +19,12 @@ class LiverpoolCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Material(
       color: Colors.red,
       child: InkWell(
-        onTap: () {
+        // Area responsive terhadap sentuhan
+        onTap: () async {
           // Memunculkan SnackBar ketika diklik
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
@@ -47,14 +36,33 @@ class LiverpoolCard extends StatelessWidget {
               context,
               MaterialPageRoute(builder: (context) => ShopFormPage()),
             );
-          };
-
-          if (item.name == "Lihat Pemain") {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => PlayerListPage()),
-            );
-          };
+          } 
+          
+          else if (item.name == "Lihat Pemain") {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const ProductPage()));
+          } 
+          
+          else if (item.name == "Logout") {
+            final response = await request.logout(
+                // TODO: Ganti URL dan jangan lupa tambahkan trailing slash (/) di akhir URL!
+                "http://127.0.0.1:8000/auth/logout/");
+            String message = response["message"];
+            if (response['status']) {
+              String uname = response["username"];
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text("$message Sampai jumpa, $uname."),
+              ));
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginPage()),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text("$message"),
+              ));
+            }
+          }
         },
         child: Container(
           // Container untuk menyimpan Icon dan Text
